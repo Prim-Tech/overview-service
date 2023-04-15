@@ -1,0 +1,20 @@
+{
+  "name": "overview-service",
+  "version": "1.0.0",
+  "author": "Danny Avila",
+  "scripts": {
+    "server": "npx nodemon  server/index.js",
+    "test": "jest"
+  },
+  "dependencies": {
+    "axios": "^1.3.2",
+    "bcrypt": "^5.1.0",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "pg": "^8.10.0"
+  },
+  "devDependencies": {
+    "jest": "^29.5.0"
+  }
+}
