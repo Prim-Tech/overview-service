@@ -1,8 +1,6 @@
 (async () => {
-  // Import required modules
   const express = require('express');
-  const { Pool } = require('pg');
-  const bcrypt = require('bcrypt');
+  const pool = require('../db/postgresql');
   const session = require('express-session');
   require('dotenv').config();
 
@@ -10,12 +8,16 @@
   const app = express();
 
   // Database connection
-  const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl: {
-      rejectUnauthorized: false
+  async function main() {
+    try {
+      const result = await pool.query('SELECT * FROM your_table');
+      console.log(result.rows);
+    } catch (error) {
+      console.error('Error executing query:', error);
     }
-  });
+  }
+
+  await main();
 
   // Middleware
   app.use(express.json());
