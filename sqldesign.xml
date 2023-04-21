@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- SQL XML created by WWW SQL Designer, https://github.com/ondras/wwwsqldesigner/ -->
+<!-- Active URL: https://sql.toad.cz/? -->
+<sql>
+<datatypes db="mysql">
+    <group label="Numeric" color="rgb(238,238,170)">
+      <type label="Integer" length="0" sql="INTEGER" quote=""/>
+    </group>
+    <group label="Character" color="rgb(255,200,200)">
+      <type label="Char" length="1" sql="CHAR" quote="'"/>
+      <type label="VarChar" length="1" sql="VARCHAR" quote="'"/>
+      <type label="MediumText" length="0" sql="MEDIUMTEXT" quote="'"/>
+    </group>
+  </datatypes><table x="125" y="100" name="product">
+<row name="id" null="1" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="name" null="1" autoincrement="0">
+<datatype>VARCHAR</datatype>
+<default>NULL</default></row>
+<row name="slogan" null="1" autoincrement="0">
+<datatype>MEDIUMTEXT</datatype>
+<default>NULL</default></row>
+<row name="description" null="1" autoincrement="0">
+<datatype>VARCHAR</datatype>
+<default>NULL</default></row>
+<row name="category" null="1" autoincrement="0">
+<datatype>VARCHAR</datatype>
+<default>NULL</default></row>
+<row name="default_price" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<key type="PRIMARY" name="">
+<part>id</part>
+</key>
+</table>
+<table x="302" y="100" name="styles">
+<row name="product_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="product" row="id" />
+</row>
+<row name="style_id" null="1" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="name" null="1" autoincrement="0">
+<datatype>VARCHAR</datatype>
+<default>NULL</default></row>
+<row name="original_price" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="sale_price" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="default_style" null="1" autoincrement="0">
+<datatype>VARCHAR</datatype>
+<default>NULL</default></row>
+<key type="PRIMARY" name="">
+<part>style_id</part>
+</key>
+<key type="FOREIGN" name="">
+<part>product_id</part>
+</key>
+</table>
+<table x="153" y="309" name="photos">
+<row name="style_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="styles" row="style_id" />
+</row>
+<row name="thumbnail_url" null="1" autoincrement="0">
+<datatype>VARCHAR</datatype>
+<default>NULL</default></row>
+<row name="url" null="1" autoincrement="0">
+<datatype>VARCHAR</datatype>
+<default>NULL</default></row>
+<key type="FOREIGN" name="">
+<part>style_id</part>
+</key>
+</table>
+<table x="442" y="283" name="SKUS">
+<row name="style_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="styles" row="style_id" />
+</row>
+<row name="sku_id" null="1" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="quantity" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="size" null="1" autoincrement="0">
+<datatype>VARCHAR</datatype>
+<default>NULL</default></row>
+<key type="PRIMARY" name="">
+<part>sku_id</part>
+</key>
+<key type="FOREIGN" name="">
+<part>style_id</part>
+</key>
+</table>
+<table x="443" y="100" name="features">
+<row name="product_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="product" row="id" />
+</row>
+<row name="feature" null="1" autoincrement="0">
+<datatype>VARCHAR</datatype>
+<default>NULL</default></row>
+<row name="value" null="1" autoincrement="0">
+<datatype>VARCHAR</datatype>
+<default>NULL</default></row>
+<key type="FOREIGN" name="">
+<part>product_id</part>
+</key>
+</table>
+<table x="601" y="100" name="related_items">
+<row name="product_id" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="product" row="id" />
+</row>
+<key type="FOREIGN" name="">
+<part>product_id</part>
+</key>
+</table>
+</sql>
