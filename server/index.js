@@ -1,8 +1,8 @@
 (async () => {
+  require('dotenv').config();
   const express = require('express');
   const pool = require('../db/postgresql');
   const session = require('express-session');
-  require('dotenv').config();
 
   // Initialize the app
   const app = express();
@@ -10,8 +10,8 @@
   // Database connection
   async function main() {
     try {
-      const result = await pool.query('SELECT * FROM your_table');
-      console.log(result.rows);
+      // const result = await pool.query('SELECT * FROM your_table');
+      // console.log(result.rows);
     } catch (error) {
       console.error('Error executing query:', error);
     }
