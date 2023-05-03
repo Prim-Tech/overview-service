@@ -74,7 +74,7 @@ const controllers = {
           })
         );
 
-        res.status(200).json({ product_id, results: stylesWithPhotosAndSkus });
+        res.status(200).json({ product_id: parseInt(product_id, 10), results: stylesWithPhotosAndSkus });
       } catch (error) {
         res.status(500).send(error);
       }
