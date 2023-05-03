@@ -3,6 +3,7 @@
   const express = require('express');
   const pool = require('../db/postgresql');
   const session = require('express-session');
+  const routes = require('./routes');
 
   // Initialize the app
   const app = express();
@@ -30,19 +31,7 @@
   }));
 
   // Routes
-  app.get('/', (req, res) => {
-    res.send('Welcome to the Express app with PostgreSQL and user authentication!');
-  });
-
-  // Login route
-  app.post('/login', async (req, res) => {
-    // ... (same as before)
-  });
-
-  // Logout route
-  app.post('/logout', (req, res) => {
-    // ... (same as before)
-  });
+  app.use('/', routes);
 
   // Start the server
   const port = process.env.PORT || 3000;
