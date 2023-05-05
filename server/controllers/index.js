@@ -68,7 +68,10 @@ const controllers = {
             delete style.id;
             return {
               ...style,
-              photos: photos.rows.map(photo => ({ thumbnail_url: photo.thumbnail_url || null, url: photo.url || null })),
+              photos: photos.rows.map(photo => ({
+                thumbnail_url: photo.thumbnail_url || null,
+                url: photo.url || null
+              })),
               skus: skus.rows.reduce((acc, sku) => {
                 acc[sku.id] = { quantity: sku.quantity, size: sku.size };
                 return acc;
@@ -77,7 +80,9 @@ const controllers = {
           })
         );
 
-        res.status(200).json({ product_id: parseInt(product_id, 10), results: stylesWithPhotosAndSkus });
+        res
+          .status(200)
+          .json({ product_id: parseInt(product_id, 10), results: stylesWithPhotosAndSkus });
       } catch (error) {
         res.status(500).send(error);
       }
@@ -86,8 +91,10 @@ const controllers = {
       const { product_id } = req.params;
 
       try {
-        const styles = await pool.query(`
-          SELECT s.*,
+        const styles = await pool.query(
+          `
+        SELECT s.id AS style_id, s.name, s.original_price, s.sale_price, s.product_id, 
+        (s.default_style::integer = 1) AS "default?", 
             json_agg(json_build_object('id', p.id, 'url', p.url, 'thumbnail_url', p.thumbnail_url)) as photos,
             json_object_agg(sk.id, json_build_object('quantity', sk.quantity, 'size', sk.size)) as skus
           FROM styles s
@@ -95,7 +102,9 @@ const controllers = {
           LEFT JOIN skus sk ON s.id = sk.style_id
           WHERE s.product_id = $1
           GROUP BY s.id
-        `, [product_id]);
+        `,
+          [product_id]
+        );
 
         res.status(200).json({ product_id, results: styles.rows });
       } catch (error) {
@@ -119,7 +128,7 @@ const controllers = {
         res.status(500).send(error);
       }
     }
-  },
+  }
 
   // cart: {
   //   get: async (req, res) => {
