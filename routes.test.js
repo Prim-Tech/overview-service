@@ -22,7 +22,7 @@ describe('Product Routes', () => {
   });
 
   it('GET /products/:product_id/styles - Should return styles, photos, and SKUs data for a product', async () => {
-    const product_id = 1;
+    const product_id = '1';
     const res = await request(app).get(`/products/${product_id}/styles`);
     expect(res.statusCode).toEqual(200);
     expect(res.body.product_id).toEqual(product_id);

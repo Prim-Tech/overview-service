@@ -5,6 +5,7 @@ const controllers = {
   product: {
     getAll: async (req, res) => {
       const { page = 1, count = 5 } = req.query;
+      console.log('getAll', page, count);
 
       try {
         const result = await pool.query(
@@ -22,6 +23,7 @@ const controllers = {
 
     getOne: async (req, res) => {
       const { product_id } = req.params;
+      console.log('getOne', product_id);
 
       try {
         const result = await pool.query(
@@ -38,6 +40,7 @@ const controllers = {
     },
     getStyles: async (req, res) => {
       const { product_id } = req.params;
+      console.log('getStyles', product_id);
 
       try {
         const styles = await pool.query(
@@ -53,19 +56,17 @@ const controllers = {
               `
           SELECT * FROM photos WHERE style_id = $1
         `,
-              [style.id]
+              [style.style_id]
             );
 
             const skus = await pool.query(
               `
           SELECT * FROM skus WHERE style_id = $1
         `,
-              [style.id]
+              [style.style_id]
             );
-            style.style_id = style.id;
             style['default?'] = !!style.default_style;
             delete style.default_style;
-            delete style.id;
             return {
               ...style,
               photos: photos.rows.map(photo => ({
@@ -91,28 +92,90 @@ const controllers = {
       const { product_id } = req.params;
 
       try {
-        const styles = await pool.query(
+        const stylesQuery = pool.query(
           `
-        SELECT s.id AS style_id, s.name, s.original_price, s.sale_price, s.product_id, 
-        (s.default_style::integer = 1) AS "default?", 
-            json_agg(json_build_object('id', p.id, 'url', p.url, 'thumbnail_url', p.thumbnail_url)) as photos,
-            json_object_agg(sk.id, json_build_object('quantity', sk.quantity, 'size', sk.size)) as skus
+          SELECT s.style_id, s.name, s.original_price, s.sale_price, s.product_id,
+          (s.default_style::integer = 1) AS "default?"
           FROM styles s
-          LEFT JOIN photos p ON s.id = p.style_id
-          LEFT JOIN skus sk ON s.id = sk.style_id
           WHERE s.product_id = $1
-          GROUP BY s.id
-        `,
+          `,
           [product_id]
         );
 
-        res.status(200).json({ product_id, results: styles.rows });
+        const photosQuery = pool.query(
+          `
+          SELECT p.style_id, json_build_object('id', p.id, 'url', p.url, 'thumbnail_url', p.thumbnail_url) as photo
+          FROM photos p
+          WHERE p.style_id IN (SELECT s.style_id FROM styles s WHERE s.product_id = $1)
+          `,
+          [product_id]
+        );
+
+        const skusQuery = pool.query(
+          `
+          SELECT sk.style_id, json_build_object('id', sk.id, 'quantity', sk.quantity, 'size', sk.size) as sku
+          FROM skus sk
+          WHERE sk.style_id IN (SELECT s.style_id FROM styles s WHERE s.product_id = $1)
+          `,
+          [product_id]
+        );
+
+        const [stylesResult, photosResult, skusResult] = await Promise.all([
+          stylesQuery,
+          photosQuery,
+          skusQuery
+        ]);
+
+        const photosByStyleId = photosResult.rows.reduce((acc, row) => {
+          acc[row.style_id] = acc[row.style_id] || [];
+          acc[row.style_id].push(row.photo);
+          return acc;
+        }, {});
+
+        const skusByStyleId = skusResult.rows.reduce((acc, row) => {
+          acc[row.style_id] = acc[row.style_id] || {};
+          acc[row.style_id][row.sku.id] = { quantity: row.sku.quantity, size: row.sku.size };
+          return acc;
+        }, {});
+
+        const styleIds = stylesResult.rows.map(row => row.style_id);
+
+        styleIds.forEach(styleId => {
+          if (!photosByStyleId[styleId]) {
+            photosByStyleId[styleId] = [
+              {
+                id: null,
+                url: null,
+                thumbnail_url: null
+              }
+            ];
+          }
+          if (!skusByStyleId[styleId]) {
+            skusByStyleId[styleId] = {
+              null: {
+                quantity: null,
+                size: null
+              }
+            };
+          }
+        });
+
+        const results = stylesResult.rows.map(row => {
+          return {
+            ...row,
+            photos: photosByStyleId[row.style_id] || [],
+            skus: skusByStyleId[row.style_id] || {}
+          };
+        });
+
+        res.status(200).json({ product_id, results });
       } catch (error) {
         res.status(500).send(error);
       }
     },
     getRelated: async (req, res) => {
       const { product_id } = req.params;
+      console.log('getRelated', product_id);
 
       try {
         const result = await pool.query(

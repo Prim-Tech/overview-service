@@ -4,7 +4,7 @@
   "author": "Danny Avila",
   "scripts": {
     "server": "npx nodemon  server/index.js",
-    "test": "jest --verbose",
+    "test": "jest --verbose --detectOpenHandles",
     "coverage": "jest --coverage"
   },
   "dependencies": {
