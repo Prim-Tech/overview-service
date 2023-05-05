@@ -62,10 +62,13 @@ const controllers = {
         `,
               [style.id]
             );
-
+            style.style_id = style.id;
+            style['default?'] = !!style.default_style;
+            delete style.default_style;
+            delete style.id;
             return {
               ...style,
-              photos: photos.rows,
+              photos: photos.rows.map(photo => ({ thumbnail_url: photo.thumbnail_url || null, url: photo.url || null })),
               skus: skus.rows.reduce((acc, sku) => {
                 acc[sku.id] = { quantity: sku.quantity, size: sku.size };
                 return acc;

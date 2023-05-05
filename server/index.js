@@ -1,7 +1,6 @@
 (async () => {
   require('dotenv').config();
   const express = require('express');
-  // const {pool} = require('../db/postgresql');
   const session = require('express-session');
   const routes = require('./routes');
 
