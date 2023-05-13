@@ -1,28 +1,31 @@
 import http from 'k6/http';
 import { sleep } from 'k6';
 
-const baseURL = 'http://localhost:3030/products';
+const baseUrl = 'http://localhost:3030/products';
 const duration = '30s';
 
 const routes = [
-  `${baseURL}`,
-  `${baseURL}/1`,
-  `${baseURL}/1/styles`,
-  `${baseURL}/1/related`,
+  `${baseUrl}`,
+  `${baseUrl}/1`,
+  `${baseUrl}/1/styles`,
+  `${baseUrl}/1/related`,
 ];
 
-function performRequests() {
-  for (const route of routes) {
-    http.get(`${baseURL}${route}`);
-  }
-}
+// function performRequests() {
+//   for (const route of routes) {
+//     http.get(`${baseUrl}${route}`);
+//   }
+// }
 
 export default function () {
-  performRequests();
+  http.get(`${baseUrl}`),
+  http.get(`${baseUrl}/1`),
+  http.get(`${baseUrl}/1/styles`),
+  http.get(`${baseUrl}/1/related`),
   sleep(1 / __VU);
 }
 
 export const options = {
-  vus: 1, // 10, 100, or 1000
-  duration: duration,
+  vus: 3000, // 10, 100, or 1000
+  duration,
 };
