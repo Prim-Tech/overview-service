@@ -148,13 +148,32 @@ def extract_from_csv(df, table_name):
     conn.close()
 
 
-def insert_data(df, table_name, cur, chunksize=1000):
-    # Filter out the rows with non-existent related_product_id's
-    if table_name == "related_items":
-        conn_subquery = create_conn()
-        df = df.loc[df["related_product_id"].isin(pd.read_sql("SELECT id FROM products", conn_subquery).id.tolist())]
-        conn_subquery.close()
+# def insert_data(df, table_name, cur, chunksize=1000):
+#     # Filter out the rows with non-existent related_product_id's
+#     if table_name == "related_items":
+#         conn_subquery = create_conn()
+#         df = df.loc[df["related_product_id"].isin(pd.read_sql("SELECT id FROM products", conn_subquery).id.tolist())]
+#         conn_subquery.close()
 
+#     total_rows = df.shape[0]
+#     total_chunks = math.ceil(total_rows / chunksize)
+
+#     for chunk_idx in range(total_chunks):
+#         start_idx = chunk_idx * chunksize
+#         end_idx = (chunk_idx + 1) * chunksize
+
+#         df_chunk = df.iloc[start_idx:end_idx, :]
+
+#         # Prepare the data as a CSV string
+#         csv_buffer = StringIO()
+#         df_chunk.to_csv(csv_buffer, index=False, header=False)
+#         csv_data = csv_buffer.getvalue()
+
+#         # import data
+#         columns = ", ".join(df.columns)
+#         cur.copy_expert(f"COPY {table_name} ({columns}) FROM STDIN WITH CSV", StringIO(csv_data))
+
+def insert_data(df, table_name, cur, chunksize=1000):
     total_rows = df.shape[0]
     total_chunks = math.ceil(total_rows / chunksize)
 
@@ -164,6 +183,10 @@ def insert_data(df, table_name, cur, chunksize=1000):
 
         df_chunk = df.iloc[start_idx:end_idx, :]
 
+        # If the table is 'related_items', filter out rows with non-existent related_product_id's
+        if table_name == "related_items":
+            df_chunk = df_chunk[df_chunk["related_product_id"].apply(lambda x: cur.execute("SELECT 1 FROM products WHERE id = %s LIMIT 1", (x,)).fetchone() is not None)]
+
         # Prepare the data as a CSV string
         csv_buffer = StringIO()
         df_chunk.to_csv(csv_buffer, index=False, header=False)
@@ -172,6 +195,8 @@ def insert_data(df, table_name, cur, chunksize=1000):
         # import data
         columns = ", ".join(df.columns)
         cur.copy_expert(f"COPY {table_name} ({columns}) FROM STDIN WITH CSV", StringIO(csv_data))
+
+
 
 # %%
 # Record the start and end time, then calculate duration
