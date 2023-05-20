@@ -177,6 +177,12 @@ def insert_data(df, table_name, cur, chunksize=1000):
     total_rows = df.shape[0]
     total_chunks = math.ceil(total_rows / chunksize)
 
+    # If the table is 'related_items', load product IDs into a set
+    product_ids = set()
+    if table_name == "related_items":
+        cur.execute("SELECT id FROM products")
+        product_ids = set(id for id, in cur.fetchall())
+
     for chunk_idx in range(total_chunks):
         start_idx = chunk_idx * chunksize
         end_idx = (chunk_idx + 1) * chunksize
@@ -185,7 +191,7 @@ def insert_data(df, table_name, cur, chunksize=1000):
 
         # If the table is 'related_items', filter out rows with non-existent related_product_id's
         if table_name == "related_items":
-            df_chunk = df_chunk[df_chunk["related_product_id"].apply(lambda x: (cur.execute("SELECT 1 FROM products WHERE id = %s LIMIT 1", (x,)), cur.fetchone() is not None)[1])]
+            df_chunk = df_chunk[df_chunk["related_product_id"].isin(product_ids)]
 
         # Prepare the data as a CSV string
         csv_buffer = StringIO()
@@ -195,8 +201,6 @@ def insert_data(df, table_name, cur, chunksize=1000):
         # import data
         columns = ", ".join(df.columns)
         cur.copy_expert(f"COPY {table_name} ({columns}) FROM STDIN WITH CSV", StringIO(csv_data))
-
-
 
 # %%
 # Record the start and end time, then calculate duration
