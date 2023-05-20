@@ -23,7 +23,34 @@ def create_conn():
         password = db_password,
     )
 
-print("loaded db")
+def test_connection(retries=3, timeout=5):
+    for attempt in range(retries):
+        conn = None
+        try:
+            conn = psycopg2.connect(
+                host="localhost",
+                port=5432,
+                dbname="mydb",
+                user="danny",
+                password=db_password,
+                connect_timeout=timeout,
+            )
+            print("Database connection successful.")
+            return True
+        except psycopg2.OperationalError as e:
+            print(f"Connection attempt {attempt + 1} failed: {e}")
+            time.sleep(1)
+        finally:
+            if conn is not None:
+                conn.close()
+    print(f"Failed to connect to the database after {retries} retries.")
+    return False
+
+if test_connection():
+    print("Connection to the database was successful.")
+else:
+    print("Unable to connect to the database. Exiting.")
+    exit(1)
 # %%
 
 product_file = "./db/data/product.csv"
