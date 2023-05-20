@@ -12,6 +12,7 @@ from dotenv import load_dotenv
 load_dotenv()
 db_password = os.environ.get('POSTGRES_PASSWORD')
 
+print("loaded env")
 # %%
 def create_conn():
     return psycopg2.connect(
@@ -22,21 +23,22 @@ def create_conn():
         password = db_password,
     )
 
+print("loaded db")
 # %%
-product_file = "./db/data/product.csv"
-df_products = pd.read_csv(product_file)
+# product_file = "./db/data/product.csv"
+# df_products = pd.read_csv(product_file)
 
-features_file = "./db/data/features.csv"
-df_features = pd.read_csv(features_file)
+# features_file = "./db/data/features.csv"
+# df_features = pd.read_csv(features_file)
 
-skus_file = "./db/data/skus.csv"
-df_skus = pd.read_csv(skus_file)
+# skus_file = "./db/data/skus.csv"
+# df_skus = pd.read_csv(skus_file)
 
-styles_file = "./db/data/styles.csv"
-df_styles = pd.read_csv(styles_file)
+# styles_file = "./db/data/styles.csv"
+# df_styles = pd.read_csv(styles_file)
 
-related_file = "./db/data/related.csv"
-df_related = pd.read_csv(related_file)
+# related_file = "./db/data/related.csv"
+# df_related = pd.read_csv(related_file)
 
 photos_file = "./db/data/photos.csv"
 columns_to_use = [0, 1, 2, 3] # Only use the first 4 columns
@@ -142,13 +144,14 @@ def insert_data(df, table_name, cur, chunksize=100000):
 
 # %%
 # Record the start and end time, then calculate duration
+print("Starting data import...")
 start_time = time.time()
-extract_from_csv(df_styles, "styles")
-extract_from_csv(df_products, "products")
 extract_from_csv(df_photos, "photos")
-extract_from_csv(df_related, "related_items")
-extract_from_csv(df_features, "features")
-extract_from_csv(df_skus, "skus")
+# extract_from_csv(df_styles, "styles")
+# extract_from_csv(df_products, "products")
+# extract_from_csv(df_related, "related_items")
+# extract_from_csv(df_features, "features")
+# extract_from_csv(df_skus, "skus")
 
 end_time = time.time()
 
