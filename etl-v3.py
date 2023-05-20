@@ -149,7 +149,7 @@ def extract_from_csv(df, table_name):
     conn.close()
 
 
-def insert_data(df, table_name, cur, chunksize=100000):
+def insert_data(df, table_name, cur, chunksize=1000):
     # Filter out the rows with non-existent related_product_id's
     if table_name == "related_items":
         conn_subquery = create_conn()
