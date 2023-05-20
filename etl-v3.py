@@ -53,11 +53,11 @@ else:
     exit(1)
 # %%
 
-product_file = "./db/data/product.csv"
-df_products = pd.read_csv(product_file)
+# product_file = "./db/data/product.csv"
+# df_products = pd.read_csv(product_file)
 
-# styles_file = "./db/data/styles.csv"
-# df_styles = pd.read_csv(styles_file)
+styles_file = "./db/data/styles.csv"
+df_styles = pd.read_csv(styles_file)
 
 # photos_file = "./db/data/photos.csv"
 # columns_to_use = [0, 1, 2, 3] # Only use the first 4 columns
@@ -178,8 +178,8 @@ def insert_data(df, table_name, cur, chunksize=1000):
 # Record the start and end time, then calculate duration
 print("starting import")
 start_time = time.time()
-extract_from_csv(df_products, "products")
-# extract_from_csv(df_styles, "styles")
+# extract_from_csv(df_products, "products")
+extract_from_csv(df_styles, "styles")
 # extract_from_csv(df_photos, "photos")
 # extract_from_csv(df_related, "related_items")
 # extract_from_csv(df_features, "features")
