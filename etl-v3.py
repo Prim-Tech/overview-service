@@ -59,19 +59,18 @@ else:
 # styles_file = "./db/data/styles.csv"
 # df_styles = pd.read_csv(styles_file)
 
-photos_file = "./db/data/photos.csv"
-columns_to_use = [0, 1, 2, 3] # Only use the first 4 columns
-df_photos = pd.read_csv(photos_file, usecols=columns_to_use)
+# photos_file = "./db/data/photos.csv"
+# columns_to_use = [0, 1, 2, 3] # Only use the first 4 columns
+# df_photos = pd.read_csv(photos_file, usecols=columns_to_use)
+
+related_file = "./db/data/related.csv"
+df_related = pd.read_csv(related_file)
 
 # features_file = "./db/data/features.csv"
 # df_features = pd.read_csv(features_file)
 
 # skus_file = "./db/data/skus.csv"
 # df_skus = pd.read_csv(skus_file)
-
-
-# related_file = "./db/data/related.csv"
-# df_related = pd.read_csv(related_file)
 
 
 print("loaded csv")
@@ -180,8 +179,8 @@ print("starting import")
 start_time = time.time()
 # extract_from_csv(df_products, "products")
 # extract_from_csv(df_styles, "styles")
-extract_from_csv(df_photos, "photos")
-# extract_from_csv(df_related, "related_items")
+# extract_from_csv(df_photos, "photos")
+extract_from_csv(df_related, "related_items")
 # extract_from_csv(df_features, "features")
 # extract_from_csv(df_skus, "skus")
 
