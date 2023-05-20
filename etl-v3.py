@@ -133,6 +133,7 @@ def extract_from_csv(df, table_name):
     if table_name == "styles":
         df['sale_price'] = df['sale_price'].apply(lambda x: 0 if pd.isna(x) or x == 'null' else int(round(float(x), 2))).astype('Int64')
 
+    print("inserting data")
     insert_data(df, table_name, cur)
     conn.commit()
 
@@ -157,9 +158,12 @@ def insert_data(df, table_name, cur, chunksize=1000):
     total_rows = df.shape[0]
     total_chunks = math.ceil(total_rows / chunksize)
 
+    print(f"importing {table_name}...")
+
     for chunk_idx in range(total_chunks):
         start_idx = chunk_idx * chunksize
         end_idx = (chunk_idx + 1) * chunksize
+        print(f"chunks: {chunk_idx} / {total_chunks}")
 
         df_chunk = df.iloc[start_idx:end_idx, :]
 
@@ -187,5 +191,3 @@ end_time = time.time()
 
 duration = end_time - start_time
 print(f"Data import took {duration:.2f} seconds.")
-
-
