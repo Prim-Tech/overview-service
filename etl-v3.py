@@ -63,7 +63,7 @@ else:
 # columns_to_use = [0, 1, 2, 3] # Only use the first 4 columns
 # df_photos = pd.read_csv(photos_file, usecols=columns_to_use)
 
-related_file = "./db/data/related.csv"
+related_file = "./db/data/related_filtered.csv"
 df_related = pd.read_csv(related_file)
 
 # features_file = "./db/data/features.csv"
@@ -71,7 +71,6 @@ df_related = pd.read_csv(related_file)
 
 # skus_file = "./db/data/skus.csv"
 # df_skus = pd.read_csv(skus_file)
-
 
 print("loaded csv")
 
@@ -148,50 +147,21 @@ def extract_from_csv(df, table_name):
     conn.close()
 
 
-# def insert_data(df, table_name, cur, chunksize=1000):
-#     # Filter out the rows with non-existent related_product_id's
-#     if table_name == "related_items":
-#         conn_subquery = create_conn()
-#         df = df.loc[df["related_product_id"].isin(pd.read_sql("SELECT id FROM products", conn_subquery).id.tolist())]
-#         conn_subquery.close()
+def insert_data(df, table_name, cur, chunksize=1000):
+    # Filter out the rows with non-existent related_product_id's
+    # if table_name == "related_items":
+    #     conn_subquery = create_conn()
+    #     df = df.loc[df["related_product_id"].isin(pd.read_sql("SELECT id FROM products", conn_subquery).id.tolist())]
+    #     conn_subquery.close()
 
-#     total_rows = df.shape[0]
-#     total_chunks = math.ceil(total_rows / chunksize)
-
-#     for chunk_idx in range(total_chunks):
-#         start_idx = chunk_idx * chunksize
-#         end_idx = (chunk_idx + 1) * chunksize
-
-#         df_chunk = df.iloc[start_idx:end_idx, :]
-
-#         # Prepare the data as a CSV string
-#         csv_buffer = StringIO()
-#         df_chunk.to_csv(csv_buffer, index=False, header=False)
-#         csv_data = csv_buffer.getvalue()
-
-#         # import data
-#         columns = ", ".join(df.columns)
-#         cur.copy_expert(f"COPY {table_name} ({columns}) FROM STDIN WITH CSV", StringIO(csv_data))
-
-def insert_data(df, table_name, cur, chunksize=20000):
     total_rows = df.shape[0]
     total_chunks = math.ceil(total_rows / chunksize)
-
-    # If the table is 'related_items', load product IDs into a set
-    product_ids = set()
-    if table_name == "related_items":
-        cur.execute("SELECT id FROM products")
-        product_ids = set(id for id, in cur.fetchall())
 
     for chunk_idx in range(total_chunks):
         start_idx = chunk_idx * chunksize
         end_idx = (chunk_idx + 1) * chunksize
 
         df_chunk = df.iloc[start_idx:end_idx, :]
-
-        # If the table is 'related_items', filter out rows with non-existent related_product_id's
-        if table_name == "related_items":
-            df_chunk = df_chunk[df_chunk["related_product_id"].isin(product_ids)]
 
         # Prepare the data as a CSV string
         csv_buffer = StringIO()
