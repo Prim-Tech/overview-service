@@ -173,7 +173,7 @@ def extract_from_csv(df, table_name):
 #         columns = ", ".join(df.columns)
 #         cur.copy_expert(f"COPY {table_name} ({columns}) FROM STDIN WITH CSV", StringIO(csv_data))
 
-def insert_data(df, table_name, cur, chunksize=1000):
+def insert_data(df, table_name, cur, chunksize=20000):
     total_rows = df.shape[0]
     total_chunks = math.ceil(total_rows / chunksize)
 
