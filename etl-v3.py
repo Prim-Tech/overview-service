@@ -185,7 +185,7 @@ def insert_data(df, table_name, cur, chunksize=1000):
 
         # If the table is 'related_items', filter out rows with non-existent related_product_id's
         if table_name == "related_items":
-            df_chunk = df_chunk[df_chunk["related_product_id"].apply(lambda x: cur.execute("SELECT 1 FROM products WHERE id = %s LIMIT 1", (x,)).fetchone() is not None)]
+            df_chunk = df_chunk[df_chunk["related_product_id"].apply(lambda x: (cur.execute("SELECT 1 FROM products WHERE id = %s LIMIT 1", (x,)), cur.fetchone() is not None)[1])]
 
         # Prepare the data as a CSV string
         csv_buffer = StringIO()
