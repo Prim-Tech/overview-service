@@ -70,7 +70,7 @@ else:
 # df_features = pd.read_csv(features_file)
 
 skus_file = "./db/data/skus.csv"
-df_skus = pd.read_csv(skus_file)
+df_skus = pd.read_csv(skus_file, low_memory=False)
 
 print("loaded csv")
 
