@@ -1,9 +1,10 @@
-# %%
 import os
 import time
 import math
 import psycopg2
 import pandas as pd
+import pyarrow as pa
+import pyarrow.parquet as pq
 
 from io import StringIO
 from psycopg2.extras import execute_values
@@ -69,8 +70,26 @@ else:
 # features_file = "./db/data/features.csv"
 # df_features = pd.read_csv(features_file)
 
+# print("reading parquet file")
+# skus_file = "./db/data/skus.parquet"
+# df_skus = pd.read_parquet(skus_file)
+
 skus_file = "./db/data/skus.csv"
-df_skus = pd.read_csv(skus_file, low_memory=False)
+chunksize = 5000
+column_data_types = {
+    'size': str
+}
+
+total_rows = sum(1 for _ in open(skus_file, 'r', encoding='us-ascii')) - 1  # Subtract 1 to exclude header
+total_chunks = (total_rows // chunksize) + 1
+final_df = pd.DataFrame()
+
+for idx, chunk in enumerate(pd.read_csv(skus_file, encoding='us-ascii', chunksize=chunksize, dtype=column_data_types)):
+    final_df = pd.concat([final_df, chunk], ignore_index=True)
+    progress_percentage = ((idx + 1) / total_chunks) * 100
+    print(f"Progress: {progress_percentage:.2f}% (Chunk {idx + 1}/{total_chunks})")
+
+df_skus = final_df
 
 print("loaded csv")
 
