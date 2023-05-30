@@ -1,4 +1,4 @@
-const client = require('./redis');
+// const client = require('./redis');
 
 (async () => {
   require('dotenv').config();
@@ -18,13 +18,13 @@ const client = require('./redis');
 
   app.use('/products', routes);
   const port = process.env.PORT || 3000;
-  await client.connect();
+  // await client.connect();
   app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
   });
 })();
 
-process.on('SIGINT', async () => {
-  await client.disconnect();
-  process.exit(0);
-});
+// process.on('SIGINT', async () => {
+//   await client.disconnect();
+//   process.exit(0);
+// });
