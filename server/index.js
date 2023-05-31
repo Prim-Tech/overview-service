@@ -19,9 +19,9 @@ const client = require('./redis');
   app.use('/products', routes);
   const port = process.env.PORT || 3000;
   await client.connect();
-  app.listen(port, '0.0.0.0', () => {
+  app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
-  });  
+  });
 })();
 
 process.on('SIGINT', async () => {
