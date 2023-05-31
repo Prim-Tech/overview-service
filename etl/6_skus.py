@@ -173,7 +173,7 @@ def process_chunks(skus_file, start_row, end_row, chunksize=5000, column_data_ty
     create_table = (start_row == 0)  # Create the table only during the first call (when start_row is 0)
     extract_from_csv(final_df, table_name, create_table=create_table)
 
-print(f"starting {current_table_name} import")
+print("starting skus import")
 start_time = time.time()
 
 total_rows = sum(1 for _ in open(skus_file, 'r', encoding='us-ascii')) - 1  # Subtract 1 to exclude header
