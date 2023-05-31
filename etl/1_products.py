@@ -67,6 +67,7 @@ else:
 
 current_file = "./db/data/product.csv"
 current_table_name = "products"
+chunksize = 5000
 
 total_rows = sum(1 for _ in open(current_file, 'r', encoding='us-ascii')) - 1  # Subtract 1 to exclude header
 total_chunks = (total_rows // chunksize) + 1

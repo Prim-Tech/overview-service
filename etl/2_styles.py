@@ -51,18 +51,9 @@ else:
     print("Unable to connect to the database. Exiting.")
     exit(1)
 
-# photos_file = "./db/data/photos.csv"
-# columns_to_use = [0, 1, 2, 3] # Only use the first 4 columns
-# df_photos = pd.read_csv(photos_file, usecols=columns_to_use)
-
-# related_file = "./db/data/related_filtered.csv"
-# df_related = pd.read_csv(related_file)
-
-# features_file = "./db/data/features.csv"
-# df_features = pd.read_csv(features_file)
-
 current_file = "./db/data/styles.csv"
 current_table_name = "styles"
+chunksize = 5000
 
 total_rows = sum(1 for _ in open(current_file, 'r', encoding='us-ascii')) - 1  # Subtract 1 to exclude header
 total_chunks = (total_rows // chunksize) + 1
