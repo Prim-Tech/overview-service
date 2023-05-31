@@ -61,7 +61,7 @@ total_rows = sum(1 for _ in open(current_file, 'r', encoding='us-ascii')) - 1  #
 total_chunks = (total_rows // chunksize) + 1
 final_df = pd.DataFrame()
 
-for idx, chunk in enumerate(pd.read_csv(current_file, encoding='us-ascii', chunksize=chunksize, dtype=column_data_types)):
+for idx, chunk in enumerate(pd.read_csv(current_file, encoding='us-ascii', chunksize=chunksize)):
     final_df = pd.concat([final_df, chunk], ignore_index=True)
     progress_percentage = ((idx + 1) / total_chunks) * 100
     print(f"Progress: {progress_percentage:.2f}% (Chunk {idx + 1}/{total_chunks})")
