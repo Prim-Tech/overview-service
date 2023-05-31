@@ -1,14 +1,26 @@
 import http from 'k6/http';
-import { sleep } from 'k6';
+import { sleep, check } from 'k6';
+import { Counter } from 'k6/metrics';
 
-const baseUrl = 'http://3.84.16.18:3030/products';
+// A counter for successful status codes
+let successCounter = new Counter('successes');
+
+const baseUrl = 'http://54.162.124.150:3030/products';
 const duration = '30s';
 
+function getAndCheck(url) {
+  let res = http.get(url);
+  let isSuccess = check(res, { 'status was 200': (r) => r.status === 200 });
+  if (isSuccess) {
+    successCounter.add(1);
+  }
+}
+
 export default function () {
-  http.get(`${baseUrl}`),
-  http.get(`${baseUrl}/1`),
-  http.get(`${baseUrl}/1/styles`),
-  http.get(`${baseUrl}/1/related`),
+  getAndCheck(`${baseUrl}`),
+  getAndCheck(`${baseUrl}/1`),
+  getAndCheck(`${baseUrl}/1/styles`),
+  getAndCheck(`${baseUrl}/1/related`),
   sleep(1 / __VU);
 }
 
