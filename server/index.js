@@ -16,15 +16,6 @@ const client = require('./redis');
     cookie: { maxAge: 60 * 60 * 1000 } // 1 hour
   }));
 
-  app.use(function(err, req, res, next) {
-    console.error(`Error: ${err.message}`);
-    console.error(`Error stack: ${err.stack}`);
-    console.error(`Request method: ${req.method}`);
-    console.error(`Request path: ${req.path}`);
-    console.error(`Request body: ${JSON.stringify(req.body)}`);
-    res.status(500).send('Something broke!');
-  });  
-
   app.use('/products', routes);
   const port = process.env.PORT || 3000;
   await client.connect();
