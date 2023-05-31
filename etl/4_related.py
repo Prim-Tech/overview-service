@@ -54,7 +54,7 @@ else:
 # df_features = pd.read_csv(features_file)
 
 current_file = "./db/data/related_filtered.csv"
-current_table_name = "related"
+current_table_name = "related_items"
 
 total_rows = sum(1 for _ in open(current_file, 'r', encoding='us-ascii')) - 1  # Subtract 1 to exclude header
 total_chunks = (total_rows // chunksize) + 1
