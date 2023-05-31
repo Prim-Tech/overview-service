@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "author": "Danny Avila",
   "scripts": {
+    "start": "node server/index.js",
     "server": "npx nodemon  server/index.js",
     "test": "jest --verbose --detectOpenHandles",
     "coverage": "jest --coverage"
