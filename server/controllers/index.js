@@ -52,55 +52,7 @@ const controllers = {
         return res.status(500).send(error);
       }
     },
-    getStyles: async (req, res) => {
-      const { product_id } = req.params;
 
-      try {
-        const styles = await pool.query(
-          `
-        SELECT * FROM styles WHERE product_id = $1
-      `,
-          [product_id]
-        );
-
-        const stylesWithPhotosAndSkus = await Promise.all(
-          styles.rows.map(async style => {
-            const photos = await pool.query(
-              `
-          SELECT * FROM photos WHERE style_id = $1
-        `,
-              [style.style_id]
-            );
-
-            const skus = await pool.query(
-              `
-          SELECT * FROM skus WHERE style_id = $1
-        `,
-              [style.style_id]
-            );
-            style['default?'] = !!style.default_style;
-            delete style.default_style;
-            return {
-              ...style,
-              photos: photos.rows.map(photo => ({
-                thumbnail_url: photo.thumbnail_url || null,
-                url: photo.url || null
-              })),
-              skus: skus.rows.reduce((acc, sku) => {
-                acc[sku.id] = { quantity: sku.quantity, size: sku.size };
-                return acc;
-              }, {})
-            };
-          })
-        );
-
-        res
-          .status(200)
-          .json({ product_id: parseInt(product_id, 10), results: stylesWithPhotosAndSkus });
-      } catch (error) {
-        res.status(500).send(error);
-      }
-    },
     getStyles2: async (req, res) => {
       const { product_id } = req.params;
       const key = `styles:${product_id}`;
@@ -220,6 +172,55 @@ const controllers = {
     },
   }
 
+  // getStyles: async (req, res) => {
+  //   const { product_id } = req.params;
+
+  //   try {
+  //     const styles = await pool.query(
+  //       `
+  //     SELECT * FROM styles WHERE product_id = $1
+  //   `,
+  //       [product_id]
+  //     );
+
+  //     const stylesWithPhotosAndSkus = await Promise.all(
+  //       styles.rows.map(async style => {
+  //         const photos = await pool.query(
+  //           `
+  //       SELECT * FROM photos WHERE style_id = $1
+  //     `,
+  //           [style.style_id]
+  //         );
+
+  //         const skus = await pool.query(
+  //           `
+  //       SELECT * FROM skus WHERE style_id = $1
+  //     `,
+  //           [style.style_id]
+  //         );
+  //         style['default?'] = !!style.default_style;
+  //         delete style.default_style;
+  //         return {
+  //           ...style,
+  //           photos: photos.rows.map(photo => ({
+  //             thumbnail_url: photo.thumbnail_url || null,
+  //             url: photo.url || null
+  //           })),
+  //           skus: skus.rows.reduce((acc, sku) => {
+  //             acc[sku.id] = { quantity: sku.quantity, size: sku.size };
+  //             return acc;
+  //           }, {})
+  //         };
+  //       })
+  //     );
+
+  //     res
+  //       .status(200)
+  //       .json({ product_id: parseInt(product_id, 10), results: stylesWithPhotosAndSkus });
+  //   } catch (error) {
+  //     res.status(500).send(error);
+  //   }
+  // },
   // cart: {
   //   get: async (req, res) => {
   //     try {

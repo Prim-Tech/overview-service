@@ -5,7 +5,7 @@ import { Counter } from 'k6/metrics';
 // A counter for successful status codes
 let successCounter = new Counter('successes');
 
-const baseUrl = 'http://34.227.22.185/products';
+const baseUrl = 'http://3.87.0.11/products';
 const duration = '30s';
 
 function getAndCheck(url) {
@@ -18,9 +18,9 @@ function getAndCheck(url) {
 
 export default function () {
   getAndCheck(`${baseUrl}`),
-  getAndCheck(`${baseUrl}/1`),
-  getAndCheck(`${baseUrl}/1/styles`),
-  getAndCheck(`${baseUrl}/1/related`),
+  // getAndCheck(`${baseUrl}/1`),
+  // getAndCheck(`${baseUrl}/1/styles`),
+  // getAndCheck(`${baseUrl}/1/related`),
   sleep(1 / __VU);
 }
 
