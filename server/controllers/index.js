@@ -35,9 +35,9 @@ const controllers = {
     
       try {
         let products = await client.get(key);
-        let lastId = +(await client.get(lastIdKey)) - 5;
+        let lastId = Math.max(+(await client.get(lastIdKey)) - 5, 0);
     
-        if (!lastId || lastId < 0) {
+        if (!lastId) {
           lastId = (page - 1) * count;
         }
         if (products) {
