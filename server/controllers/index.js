@@ -27,59 +27,40 @@ const controllers = {
       } catch (error) {
         return res.status(500).send(error);
       }
-    },
+    },    
     getAll2: async (req, res) => {
       const { page = 1, count = 5 } = req.query;
       const lastIdKey = `products:lastId:${page}:${count}`; 
       const key = `products:${page}:${count}`; 
-
+    
       try {
         let products = await client.get(key);
-        let lastId = await client.get(lastIdKey);
-
-        if (count !== 5) {
-          if (products) {
-            return res.status(200).json(JSON.parse(products));
-          } else {
-            const result = await pool.query(
-              `
-              SELECT * FROM products
-              LIMIT $1 OFFSET $2
-              `,
-              [count, (page - 1) * count]
-            );
-
-            await client.set(key, JSON.stringify(result.rows), 'EX', 3600);
-            return res.status(200).json(result.rows);
-          }
+        let lastId = +(await client.get(lastIdKey)) - 5;
+    
+        if (!lastId || lastId < 0) {
+          lastId = (page - 1) * count;
+        }
+        if (products) {
+          return res.status(200).json(JSON.parse(products));
         } else {
-          if (!lastId) {
-            lastId = 0; 
-          }
-          if (products) {
-            return res.status(200).json(JSON.parse(products));
-          } else {
-            const result = await pool.query(
-              `
-              SELECT * FROM products
-              WHERE id > $1
-              ORDER BY id
-              LIMIT $2
-              `,
-              [lastId, count]  
-            );
-            
-            const newLastId = result.rows.length > 0 ? result.rows[result.rows.length - 1].id : lastId;
-            console.log('Setting newLastId as lastId was not properly pre-cached', newLastId);
-            await client.set(lastIdKey, newLastId, 'EX', 3600);
-            await client.set(key, JSON.stringify(result.rows), 'EX', 3600);
-            return res.status(200).json(result.rows);
-          }
+          const result = await pool.query(
+            `
+            SELECT * FROM products
+            WHERE id > $1
+            ORDER BY id
+            LIMIT $2
+            `,
+            [lastId, count]
+          );
+    
+          await client.set(key, JSON.stringify(result.rows), 'EX', 3600);
+          await client.set(lastIdKey, (result.rows[result.rows.length - 1].id));
+          return res.status(200).json(result.rows);
         }
       } catch (error) {
         return res.status(500).send(error);
       }
-    },
+    },    
     getOne: async (req, res) => {
       const { product_id } = req.params;
       const key = `product:${product_id}`;
