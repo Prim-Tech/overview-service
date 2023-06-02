@@ -6,9 +6,9 @@ let failureCounter = new Counter('my_http_req_failed');
 
 export let options = {
   stages: [
-    { duration: '100s', target: 100 }, // ramp up to 100 users
-    { duration: '160s', target: 150 }, // stay at 100 users
-    { duration: '100s', target: 100 },  // ramp down to 0 users
+    { duration: '50s', target: 100 }, // ramp up to 100 users
+    { duration: '80s', target: 150 }, // stay at 100 users
+    { duration: '50s', target: 100 },  // ramp down to 0 users
   ],
   // thresholds: {
   //   http_req_duration: ['avg<2000'], // 99% of requests must complete below 2s
@@ -33,7 +33,7 @@ function generateRandom() {
 
 export default function () {
   let { page, count } = generateRandom();
-  let res = http.get(`http://44.203.115.209/products?page=${page}&count=${count}`);
+  let res = http.get(`http://34.227.26.68/products?page=${page}&count=${count}`);
   
   // check if the http request was successful
   let resultCheck = check(res, {
