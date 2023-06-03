@@ -20,7 +20,7 @@ const controllers = {
 
                 return res.status(200).json(result.rows);
             } catch (error) {
-                console.log(error);
+
                 return res.status(500).send(error);
             }
         },
@@ -38,7 +38,7 @@ const controllers = {
 
                 return res.status(200).json(result.rows[0]);
             } catch (error) {
-                console.log(error);
+
                 return res.status(500).send(error);
             }
         },
@@ -125,7 +125,7 @@ const controllers = {
 
                 return res.status(200).json({ product_id, results });
             } catch (error) {
-                console.log(error);
+
                 return res.status(500).send(error);
             }
         },
@@ -144,7 +144,7 @@ const controllers = {
                 const relatedProductIds = result.rows.map(row => row.related_product_id);
                 return res.status(200).json(relatedProductIds);
             } catch (error) {
-                console.log(error);
+
                 return res.status(500).send(error);
             }
         },
