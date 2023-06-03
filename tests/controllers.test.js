@@ -32,12 +32,6 @@ describe('Product Controller Methods', () => {
     await product.getStyles(req, res);
     expect(pool.query).toHaveBeenNthCalledWith(1, expect.any(String), [product_id]);
   });
-
-  test('getStyles2 - Should call the pool.query() function with the correct parameters', async () => {
-    const { product_id } = req.params;
-    await product.getStyles2(req, res);
-    expect(pool.query).toHaveBeenNthCalledWith(1, expect.any(String), [product_id]);
-  });
   
   test('getRelated - Should call the pool.query() function with the correct parameters', async () => {
     const { product_id } = req.params;

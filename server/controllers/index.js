@@ -6,30 +6,6 @@ const controllers = {
   product: {
     getAll: async (req, res) => {
       const { page = 1, count = 5 } = req.query;
-      const key = `products:${page}:${count}`;
-
-      try {
-        let products = await client.get(key);
-        if (products) {
-          return res.status(200).json(JSON.parse(products));
-        } else {
-          const result = await pool.query(
-            `
-            SELECT * FROM products
-            LIMIT $1 OFFSET $2
-          `,
-            [count, (page - 1) * count]
-          );
-
-          await client.set(key, JSON.stringify(result.rows), 'EX', 3600);
-          return res.status(200).json(result.rows);
-        }
-      } catch (error) {
-        return res.status(500).send(error);
-      }
-    },    
-    getAll2: async (req, res) => {
-      const { page = 1, count = 5 } = req.query;
       const lastIdKey = `products:lastId:${page}:${count}`; 
       const key = `products:${page}:${count}`; 
     
@@ -85,7 +61,7 @@ const controllers = {
       }
     },
 
-    getStyles2: async (req, res) => {
+    getStyles: async (req, res) => {
       const { product_id } = req.params;
       const key = `styles:${product_id}`;
     
@@ -203,7 +179,35 @@ const controllers = {
       }
     },
   }
+};
 
+module.exports = controllers;
+
+
+  // getAll: async (req, res) => {
+  //   const { page = 1, count = 5 } = req.query;
+  //   const key = `products:${page}:${count}`;
+
+  //   try {
+  //     let products = await client.get(key);
+  //     if (products) {
+  //       return res.status(200).json(JSON.parse(products));
+  //     } else {
+  //       const result = await pool.query(
+  //         `
+  //         SELECT * FROM products
+  //         LIMIT $1 OFFSET $2
+  //       `,
+  //         [count, (page - 1) * count]
+  //       );
+
+  //       await client.set(key, JSON.stringify(result.rows), 'EX', 3600);
+  //       return res.status(200).json(result.rows);
+  //     }
+  //   } catch (error) {
+  //     return res.status(500).send(error);
+  //   }
+  // },    
   // getStyles: async (req, res) => {
   //   const { product_id } = req.params;
 
@@ -310,6 +314,3 @@ const controllers = {
   //     }
   //   }
   // }
-};
-
-module.exports = controllers;
